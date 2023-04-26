@@ -1,6 +1,3 @@
-#include "fintrf.h"
-#include "inttypef.h"
-
       subroutine rowmap(n,f,ifcn,t,u,tend,hs,rtol,atol,itol,
      1                  jacv,ijacv,fdt,ifdt,solout,iout,work,
      2                  lwork,iwork,liwork,rpar,ipar,idid)
@@ -77,7 +74,7 @@ c   f      = Name (external) of user-supplied subroutine computing the
 c            value f(t,u): 
 c                subroutine f(n,t,u,udot,rpar,ipar)
 c                real*8 t,u(n),udot(n),rpar(*)
-c                INTTYPEF n,ipar(*) 
+c                integer,n,ipar(*) 
 c                udot(1)= ...
 c            rpar,ipar (user parameters, see below).
 c       
@@ -116,7 +113,7 @@ c            the jacobian-vector product.
 c            z := Jac(t,u)*v, Jac=df/du:  
 c                subroutine jacv(n,t,u,v,z,rpar,ipar)
 c                real*8 t,u(n),v(n),z(n),rpar(*)
-c                INTTYPEF n,ipar(*)
+c                integer n,ipar(*)
 c                z(1)=...   
 c            rpar,ipar (see below).
 c            This routine is only called if ijacv = 1. 
@@ -134,7 +131,7 @@ c            This routine is only called if idft=1 and ifcn=1.
 c
 c                subroutine fdt(n,t,u,ft,rpar,ipar) 
 c                real*8 t,u(n),ft(n),rpar(*)
-c                INTTYPEF ipar(*)
+c                integer ipar(*)
 c                ft(1)=...
 c
 c            rpar,ipar (see below).
@@ -151,7 +148,7 @@ c            a dummy subroutine if iout = 0. It must have the form:
 c
 c               subroutine solout(n,told,tnew,uold,unew,fold,fnew,ucon,
 c              1                  intr,rpar,ipar)
-c               INTTYPEF n,intr,ipar(*)
+c               integer n,intr,ipar(*)
 c               real*8 told,tnew,uold(n),unew(n),fold(n),fnew(n),ucon(n)
 c               real*8 rpar(*)
 c               ...
@@ -259,10 +256,10 @@ c       Level 2: DGEMV,DTRSV
 c
 c-----!----------------------------------------------------------------- 
       implicit none
-      INTTYPEF n,lwork,liwork,iwork(liwork)
-      INTTYPEF itol,ijacv,ifdt,iout,ipar(*) ,ifcn,idid
-      INTTYPEF pmq,pmh,pmak1,pmak2,pmak3,pmak4,pmft,pmuu,pmfu0
-      INTTYPEF pmrhs,pml1,pml2,pml3,pml4,pmfm,pmcon,pmscal,pmmax,mx
+      integer n,lwork,liwork,iwork(liwork)
+      integer itol,ijacv,ifdt,iout,ipar(*) ,ifcn,idid
+      integer pmq,pmh,pmak1,pmak2,pmak3,pmak4,pmft,pmuu,pmfu0
+      integer pmrhs,pml1,pml2,pml3,pml4,pmfm,pmcon,pmscal,pmmax,mx
       real*8 rpar(*) 
       real*8 t,u(n),tend,hs,rtol(*),atol(*),work(lwork),ktol
       external fdt,f,solout,jacv 
@@ -270,16 +267,16 @@ c
 c Globals.
 c
       real*8 uround
-      INTTYPEF cifcn,citol,cijacv,cifdt,ciout,method,lun
+      integer cifcn,citol,cijacv,cifdt,ciout,method,lun
       common /rowmap0/uround,cifcn,citol,cijacv,cifdt,ciout,method,lun
 
 c     For statistics.
-      INTTYPEF nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3)
+      integer nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3)
       common /rowmap1/nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim
 c 
 c Parameters for step size control.
 c
-      INTTYPEF nstpx
+      integer nstpx
       real*8 fac1,fac2,fac3,maxstp
       common  /rowmap2 /fac1,fac2,fac3,maxstp,nstpx
 c
@@ -401,7 +398,7 @@ c  ucon = Approximation at time s.
 c
       subroutine rowcon(n,s,told,tnew,uold,unew,fold,fnew,ucon)
       implicit none
-      INTTYPEF n
+      integer n
       real*8 s,told,tnew,uold(n),unew(n),fold(n),fnew(n),ucon(n)
       real*8 theta,theta2,thetam1,hs,g
       real*8 dzero(1)
@@ -443,7 +440,7 @@ c  ucon = Approximation at time s.
 c
       subroutine rowlin(n,s,told,tnew,uold,unew,ucon)
       implicit none
-      INTTYPEF n
+      integer n
       real*8 s,told,tnew,uold(n),unew(n),ucon(n)
       real*8 theta,hs
       hs=tnew-told
@@ -468,7 +465,7 @@ c
      1              ktol,q,h,ak1,ak2,ak3,ak4,ft,uu,fu0,rhs,l1,l2,
      2               l3,l4,fm,ucon,scal,kl,mx,rpar,ipar,idid)
       implicit none
-      INTTYPEF mx,n,kl(mx),asv,mk,ipar(*),idid,i,j,intr,info,nsing,st
+      integer mx,n,kl(mx),asv,mk,ipar(*),idid,i,j,intr,info,nsing,st
       real*8 t,u(n),tend,hs,rtol(*),atol(*),fm(n),ts,ktol,ktol1
       real*8 q(n,mx),h(mx,mx),ak1(n),ak2(n),ak3(n),ak4(n),
      1       ft(n),uu(n), fu0(n),l1(mx),l2(mx),l3(mx),l4(mx),
@@ -488,14 +485,14 @@ c
 
 C     Globals.   
       real*8 uround
-      INTTYPEF ifcn,itol,ijacv,ifdt,iout,method,lun
+      integer ifcn,itol,ijacv,ifdt,iout,method,lun
       common /rowmap0/uround,ifcn,itol,ijacv,ifdt,iout,method,lun
 c     For statistics.
-      INTTYPEF nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3)
+      integer nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3)
       common /rowmap1/nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim
 
 c     For step size control.
-      INTTYPEF nstpx
+      integer nstpx
       real*8 fac1,fac2,fac3,maxstp
       common  /rowmap2 /fac1,fac2,fac3,maxstp,nstpx
 
@@ -748,8 +745,8 @@ c
       subroutine stage(q,h,rhs,l,kl,asv,mk,mx,n,fm,fu0,u,t,st,ktol1,
      1                 ehg,ak,scal,f,jacv,fdt,rpar,ipar,info)
       implicit none
-      INTTYPEF mx,n,mk,i,asv,m,ikrdim,info
-      INTTYPEF kl(mx),st,krydim(4,4),ipar(*)
+      integer mx,n,mk,i,asv,m,ikrdim,info
+      integer kl(mx),st,krydim(4,4),ipar(*)
       logical done
       real*8 q(n,mx),h(mx,mx),rhs(n),l(mx),dnrm2,ktol1,nrmv,nrmrhs
       real*8 fm(n),fu0(n),u(n),t,ehg,dfkt
@@ -771,11 +768,11 @@ c
 
 c     Globals.
       real*8 uround
-      INTTYPEF ifcn,itol,ijacv,ifdt,iout,method,lun
+      integer ifcn,itol,ijacv,ifdt,iout,method,lun
       common /rowmap0/uround,ifcn,itol,ijacv,ifdt,iout,method,lun
 
 c     Statistics.
-      INTTYPEF nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3)
+      integer nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3)
       common /rowmap1/nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim
 
       dzero = 0d0
@@ -855,7 +852,7 @@ c
 c
       subroutine orthov(n,m,q,v,l,mx)
       implicit none
-      INTTYPEF n,m,mx,i
+      integer n,m,mx,i
       real*8 q(n,*), v(n),l(mx),s,ddot 
       real*8 dzero(1)
       dzero=0d0
@@ -877,7 +874,7 @@ c extentions have to be re-orthogonalized to q(.,m).
 c
       subroutine reortn(n,m,kl,q,h,mx)
       implicit none
-      INTTYPEF n,m,kl(*),mx,j0,j
+      integer n,m,kl(*),mx,j0,j
       real*8 q(n,*),h(mx,*),s,ddot
       j0=m
       do 100 j=m-1,1,-1
@@ -906,14 +903,14 @@ c
       subroutine kryarn(n,t,u,mk,m,kl,q,h,mx,ehg,l,fm,fu0,f,
      1          jacv,rpar,ipar)
       implicit none
-      INTTYPEF n,mk,m,kl(*),mx, i,j,j0
+      integer n,mk,m,kl(*),mx, i,j,j0
 
       real*8 uround
-      INTTYPEF ifcn,itol,ijacv,ifdt,iout,method,lun
+      integer ifcn,itol,ijacv,ifdt,iout,method,lun
       common /rowmap0/uround,ifcn,itol,ijacv,ifdt,iout,method,lun
 
-      INTTYPEF one
-      INTTYPEF nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3),ipar(*)
+      integer one
+      integer nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim(4,3),ipar(*)
       common /rowmap1/nfeval,nsteps,nstepsr,nfdt,njacv,nkrydim
       real*8  u(n),t,q(n,*),h(mx,*),ehg,l(*), c,s,fm(n),fu0(n)
       real*8  rpar(*)
@@ -974,7 +971,7 @@ c               r = (I-gh A) Q l - rhs.
 c
       subroutine krdfkt(n,m,kl,q,h,mx,r,fu0,dn,st,asv,egh,scal)
       implicit none
-      INTTYPEF n,m,mx,kl(mx),i,j,li,ls,mi,st,asv,j0
+      integer n,m,mx,kl(mx),i,j,li,ls,mi,st,asv,j0
       real*8 q(n,*),h(mx,*),r(m),fu0(*),dn,s,qn,dnrm2,egh,gh
       real*8 scal(n),wrmsq
 
@@ -1043,7 +1040,7 @@ c
 
       subroutine rowdq(n,t,u,y,fu0,fm,v,f,rpar,ipar)
       implicit none
-      INTTYPEF n,ipar(*)
+      integer n,ipar(*)
       real*8  t,u(n),y(n),fu0(n),fm(n),v(n),delta
       real*8  rpar(*),eddelta,unorm
       external f
@@ -1067,7 +1064,7 @@ c
      1            b1,b2,b3,b4,e1,e2,e3,e4,gamma,
      2            c2,c3,d1,d2,d3,d4,g21,g31,g32,g41,g42,g43)
       implicit none
-      INTTYPEF method
+      integer method
       real*8 a21,a31,a32,c21,c31,c32,c41,c42,c43,b1,b2,b3,b4,e1,e2,e3,
      1   e4,gamma,c2,c3,d1,d2,d3,d4,g21,g31,g32,g41,g42,g43
       goto (1,2,3,4,5,6),method

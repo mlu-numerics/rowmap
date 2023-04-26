@@ -9,9 +9,9 @@ c-----!-----------------------------------------------------------------
 
       program driver
       implicit none
-      integer n,liwork,lwork,nx,ipar,idid
+      integer n,liwork,lwork,nx,ipar(1),idid
       parameter(liwork=100, lwork=500000, nx=5000)
-      real*8 u(nx),t,tend,atol,rtol,work(lwork),hs,rpar
+      real*8 u(nx),t,tend,atol,rtol,work(lwork),hs,rpar(1)
       external fex,jacv,solout,fdt
       integer iwork(liwork),itol,ifcn,ijacv,ifdt,iout,i
 
@@ -32,10 +32,10 @@ c  derivative f_t:
 c  don't call solout
       iout=0 
 c  clear work and iwork, i.e. use the default values for optional input.
-      do 100 i=1,20
+      do i=1,20
         iwork(i)=0
         work(i)=0d0
- 100  continue
+      end do
       rpar=0d0
       ipar=0
 
@@ -127,9 +127,9 @@ c
       data pi/ 3.141592654D0/
       fk2 = (m+1)*(m+1)*9D0/(pi*pi)
       dx = 1D0/(m+1)
-      do 100 i=1,m
+      do  i=1,m
        x1 = i*dx
-       do 100 j=1,m
+       do  j=1,m
        x2 = j*dx
        d2 = -4D0*u(i,j)
        if (i.gt.1) d2 = d2+u(i-1,j)
@@ -138,7 +138,8 @@ c
        if (j.lt.m) d2 = d2+u(i,j+1)
        eu = dexp(u(i,j))
        fw(i,j) = eu*fk2*d2+u(i,j)*(18D0*eu-1D0)
-  100 continue
+      end do
+      end do
       return
       end
 
@@ -156,8 +157,8 @@ c
       real*8 t,u(m,m),y(m,m),z(m,m), pi,fk2,eu,d2,du,rpar(*)
       data pi/3.14159265358979D0/
       fk2 = (m+1)*(m+1)*9D0/(pi*pi)
-      do 100 i=1,m
-       do 100 j=1,m
+      do  i=1,m
+       do  j=1,m
        eu = dexp(u(i,j))
        d2 = -4D0*y(i,j)
        du = -4D0*u(i,j)
@@ -178,7 +179,8 @@ c
         du = du+u(i,j+1)
        endif
        z(i,j) = eu*fk2*(d2+du*y(i,j))+(18D0*eu*(1D0+u(i,j))-1D0)*y(i,j)
-  100 continue
+      end do
+      end do
       return
       end
 
@@ -200,11 +202,13 @@ c Number of equations.
 c Initial values.
       t0 = 0D0
       dx = pi/(m+1)
-      do 100 i=1,m
-       x1 = i*dx
-       do 100 j=1,m
-       x2 = j*dx
-  100  u(i,j) = dsin(x1)*dsin(x2)
+      do  i=1,m
+           x1 = i*dx
+           do  j=1,m
+           x2 = j*dx
+           u(i,j) = dsin(x1)*dsin(x2)
+      end do
+      end do
 c Endpoint of integration.
       te = 1d0
       return
