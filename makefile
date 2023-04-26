@@ -1,1 +1,3 @@
-demo:; gfortran -o demo -std=legacy driver.f rowmap.f -lblas -llapack 
+LIBS="-lblas -llapack"
+demo: driver.F rowmap.F 
+	gfortran -o $@ $^ $(LIBS)
