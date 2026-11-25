@@ -1,5 +1,8 @@
 # Rowmap
 
+[![crates.io](https://img.shields.io/crates/v/rowmap.svg)](https://crates.io/crates/rowmap)
+[![docs.rs](https://docs.rs/rowmap/badge.svg)](https://docs.rs/rowmap)
+
 A ROW-code with Krylov techniques for large stiff ODEs
 
 This repository contains two implementations:
@@ -34,6 +37,9 @@ The Rust version implements the same method (GRK4T with the multiple Arnoldi
 process), plus an optional order-3 method ROS34PW2. It needs only a
 Jacobian-vector product, has no dependencies, and is verified against the
 Fortran code on all problems of the original paper.
+
+- crate: <https://crates.io/crates/rowmap>
+- API documentation: <https://docs.rs/rowmap>
 
 ```sh
 cargo add rowmap
