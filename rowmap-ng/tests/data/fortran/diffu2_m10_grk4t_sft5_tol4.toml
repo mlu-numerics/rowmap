@@ -1,0 +1,18 @@
+[run]
+producer = "rowmap-f77"
+problem = "diffu2"
+m = 10
+n = 100
+method = "grk4t"
+rtol =  1.0000000000000000E-004
+atol =  1.0000000000000000E-004
+max_krylov = 66
+sft = 5
+t_end =  1.0000000000000000E+000
+idid = 1
+
+[stats]
+err =  2.3393841191148976E-006
+nstep = 15
+nfeval = 46
+cpu_time =  1.0588266384778011E-003

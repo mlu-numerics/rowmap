@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-rs"
+problem = "diffu2"
+m = 10
+n = 100
+method = "ros34pw2"
+schedule = "paper"
+rtol = 1e-3
+atol = 1e-3
+max_krylov = 66
+sft = 2
+t_end = 1e0
+idid = 1
+
+[stats]
+err = 8.960512361149093e-6
+nstep = 5
+nfeval = 22
+cpu_time = 2.759196646442361e-4

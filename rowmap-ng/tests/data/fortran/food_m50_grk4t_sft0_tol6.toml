@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-f77"
+problem = "food"
+m = 50
+n = 5000
+method = "grk4t"
+rtol =  9.9999999999999995E-007
+atol =  9.9999999999999995E-007
+max_krylov = 66
+sft = 0
+t_end =  3.0000000000000000E+000
+idid = 1
+
+[stats]
+err =  1.1312439226807587E-004
+nstep = 1737
+nfeval = 5154
+njv = 11798
+cpu_time =  8.0324899999999999E-001

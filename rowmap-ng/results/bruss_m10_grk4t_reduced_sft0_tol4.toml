@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-rs"
+problem = "bruss"
+m = 10
+n = 200
+method = "grk4t"
+schedule = "no-stage4-closure"
+rtol = 1e-4
+atol = 1e-4
+max_krylov = 66
+sft = 0
+t_end = 1e0
+idid = 1
+
+[stats]
+err = 4.715947731788185e-6
+nstep = 37
+nfeval = 111
+cpu_time = 8.673463119584056e-4

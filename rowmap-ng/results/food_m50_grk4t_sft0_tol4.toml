@@ -1,0 +1,20 @@
+[run]
+producer = "rowmap-rs"
+problem = "food"
+m = 50
+n = 5000
+method = "grk4t"
+schedule = "paper"
+rtol = 1e-4
+atol = 1e-4
+max_krylov = 66
+sft = 0
+t_end = 3e0
+idid = 1
+
+[stats]
+err = 3.911780639617217e-3
+nstep = 593
+nfeval = 1730
+njv = 8388
+cpu_time = 5.9058366e-1

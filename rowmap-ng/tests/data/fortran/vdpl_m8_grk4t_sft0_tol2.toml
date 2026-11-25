@@ -1,0 +1,18 @@
+[run]
+producer = "rowmap-f77"
+problem = "vdpl"
+m = 8
+n = 128
+method = "grk4t"
+rtol =  1.0000000000000000E-002
+atol =  1.0000000000000000E-002
+max_krylov = 66
+sft = 0
+t_end =  1.0000000000000000E+003
+idid = 1
+
+[stats]
+err =  7.7109978679678748E-001
+nstep = 672
+nfeval = 1829
+cpu_time =  1.7205033333333335E-002

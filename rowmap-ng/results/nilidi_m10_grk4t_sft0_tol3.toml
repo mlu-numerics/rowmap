@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-rs"
+problem = "nilidi"
+m = 10
+n = 100
+method = "grk4t"
+schedule = "paper"
+rtol = 1e-3
+atol = 1e-3
+max_krylov = 66
+sft = 0
+t_end = 1e0
+idid = 1
+
+[stats]
+err = 1.3739809231669111e-5
+nstep = 4
+nfeval = 14
+cpu_time = 1.9836758310194368e-4

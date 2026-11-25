@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-rs"
+problem = "difkon"
+m = 10
+n = 100
+method = "ros34pw2"
+schedule = "paper"
+rtol = 1e-3
+atol = 1e-3
+max_krylov = 66
+sft = 2
+t_end = 1e0
+idid = 1
+
+[stats]
+err = 1.66231291805373e-4
+nstep = 6
+nfeval = 26
+cpu_time = 2.8005038017917135e-4

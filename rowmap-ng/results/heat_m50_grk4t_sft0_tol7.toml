@@ -1,0 +1,20 @@
+[run]
+producer = "rowmap-rs"
+problem = "heat"
+m = 50
+n = 2500
+method = "grk4t"
+schedule = "paper"
+rtol = 1e-7
+atol = 1e-7
+max_krylov = 66
+sft = 0
+t_end = 1.024e1
+idid = 1
+
+[stats]
+err = 5.1861161162995843e-11
+nstep = 99
+nfeval = 296
+njv = 1353
+cpu_time = 4.413936658333333e-2

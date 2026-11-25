@@ -1,0 +1,17 @@
+/target
+Cargo.lock.bak
+plots/out/
+fortran/experiments/build/
+lean/.lake/
+__pycache__/
+*.o
+*.mod
+# LaTeX report: sources, figures (PDF) and ratios.tex are committed
+docs/report/report.pdf
+docs/slides/rowmap.pdf
+docs/report/*.aux
+docs/report/*.fdb_latexmk
+docs/report/*.fls
+docs/report/*.log
+docs/report/*.out
+docs/report/fig/*.png

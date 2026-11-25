@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-f77"
+problem = "nilidi"
+m = 69
+n = 4761
+method = "grk4t"
+rtol =  1.0000000000000000E-003
+atol =  1.0000000000000000E-003
+max_krylov = 66
+sft = 0
+t_end =  1.0000000000000000E+000
+idid = 1
+
+[stats]
+err =  4.0380581725130614E-005
+nstep = 6
+nfeval = 19
+njv = 251
+cpu_time =  3.0341176470588239E-002

@@ -1,0 +1,29 @@
+[package]
+name = "rowmap"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "ROWMAP: a Krylov-W method of order 4 for large stiff ODEs (multiple Arnoldi process)"
+license = "MIT"
+repository = "https://github.com/mlu-numerics/rowmap"
+homepage = "https://github.com/mlu-numerics/rowmap/tree/main/rowmap-ng"
+documentation = "https://docs.rs/rowmap"
+readme = "README.md"
+keywords = ["ode", "stiff", "krylov", "rosenbrock", "integrator"]
+categories = ["mathematics", "science", "algorithms"]
+# the crate ships only the library; experiments, data, proofs and the
+# Fortran baseline live in the repository
+include = ["/src/**", "/README.md", "/LICENSE", "/Cargo.toml"]
+
+[dependencies]
+
+[features]
+# internal timers for performance work (examples/profile.rs); off by default
+profile = []
+
+# the integration tests run real integrations; unoptimized they are slow
+[profile.test]
+opt-level = 2
+
+[dev-dependencies]
+toml = "1.1.8"

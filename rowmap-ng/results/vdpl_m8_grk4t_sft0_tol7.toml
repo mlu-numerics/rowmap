@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-rs"
+problem = "vdpl"
+m = 8
+n = 128
+method = "grk4t"
+schedule = "paper"
+rtol = 1e-7
+atol = 1e-7
+max_krylov = 66
+sft = 0
+t_end = 1e3
+idid = 1
+
+[stats]
+err = 9.820920051403158e-8
+nstep = 11401
+nfeval = 34000
+cpu_time = 2.7520957e-1

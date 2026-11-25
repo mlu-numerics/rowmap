@@ -1,0 +1,20 @@
+[run]
+producer = "rowmap-rs"
+problem = "heat"
+m = 50
+n = 2500
+method = "grk4t"
+schedule = "no-stage4-closure"
+rtol = 1e-6
+atol = 1e-6
+max_krylov = 66
+sft = 0
+t_end = 1.024e1
+idid = 1
+
+[stats]
+err = 3.2850454751650034e-10
+nstep = 61
+nfeval = 182
+njv = 798
+cpu_time = 2.5941709400000002e-2

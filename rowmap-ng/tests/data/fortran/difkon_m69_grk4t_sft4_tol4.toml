@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-f77"
+problem = "difkon"
+m = 69
+n = 4761
+method = "grk4t"
+rtol =  1.0000000000000000E-004
+atol =  1.0000000000000000E-004
+max_krylov = 66
+sft = 4
+t_end =  1.0000000000000000E+000
+idid = 1
+
+[stats]
+err =  1.6571415063297234E-005
+nstep = 13
+nfeval = 40
+njv = 381
+cpu_time =  7.2135285714285707E-002

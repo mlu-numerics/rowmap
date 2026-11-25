@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-f77"
+problem = "heat"
+m = 50
+n = 2500
+method = "grk4t"
+rtol =  1.0000000000000001E-005
+atol =  1.0000000000000001E-005
+max_krylov = 66
+sft = 0
+t_end =  1.0240000000000000E+001
+idid = 1
+
+[stats]
+err =  4.0487826558873999E-009
+nstep = 39
+nfeval = 115
+njv = 637
+cpu_time =  2.0748119999999995E-002

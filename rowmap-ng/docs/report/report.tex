@@ -1,0 +1,164 @@
+% Work-precision diagrams: rowmap (Rust) vs rowmap.F (Fortran 77).
+% Build:  cd docs/report && latexmk -lualatex report.tex
+% Figures: uv run plots/work_precision.py --native-only --out docs/report/fig
+% Table:   uv run tools/wp_ratio.py --tex docs/report/ratios.tex
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{hyperref}
+
+\title{ROWMAP in Rust: work-precision diagrams}
+\author{rowmap-ng}
+\date{31 October 2026}
+
+\newcommand{\fig}[2]{%
+  \begin{subfigure}{0.49\textwidth}\centering
+    \includegraphics[width=\linewidth]{fig/wp_#1.pdf}\caption{#2}
+  \end{subfigure}}
+
+\begin{document}
+\maketitle
+
+\section{Setup}
+
+All runs use the paper grids, $\mathrm{rtol}=\mathrm{atol}=\mathrm{tol}$ for
+$\mathrm{tol}=10^{-2},\dots,10^{-7}$, and a maximum Krylov dimension of~66.
+$\mathrm{ERR}$ is the paper's error measure at $t_\mathrm{end}$ against a
+DOPRI5 reference ($\mathrm{tol}=10^{-10}$). The CPU time covers the
+integration only. It is the mean over repeated runs that take at least
+0.5\,s together (Fortran driver and Rust example alike). The machine is
+an Intel Core i5-6500 (AVX2/FMA) with Rust~1.98 (\texttt{--release}, no
+\texttt{target-cpu}; the AVX2/FMA kernels are chosen at run time), and
+gfortran~16.2 \texttt{-O2} with OpenBLAS.
+
+Series:
+\begin{description}
+  \item[F77 GRK4T] the original \texttt{rowmap.F}, exact $J v$; the
+    non-autonomous problems use $f_t$ (strategy sft${}=2$).
+  \item[Rust GRK4T] default method, MAP schedule with the minimal dimensions
+    4/7/8/11 (autonomous) and 4/9/10/15 (non-autonomous).
+  \item[Rust ROS34PW2] the order-3 option (\texttt{Method::Ros34pw2},
+    Rang--Angermann 2005: stiffly accurate, L-stable), minimal dimensions
+    3/4/4/4 and 3/4/8/8.
+  \item[Rust GRK4T (no-stage4-closure)] diagnostic only, autonomous problems:
+    the schedule without the stage-4 closure (4/7/7/8). It keeps classical
+    order~4 (\texttt{docs/map.md} §4); this is open question~2 for the
+    authors.
+\end{description}
+
+\section{Work-precision diagrams}
+
+\begin{figure}[htbp]\centering
+  \fig{heat_m50}{HEAT}\hfill\fig{nilidi_m69}{NILIDI}\\[1ex]
+  \fig{bruss_m50}{BRUSS}\hfill\fig{food_m50}{FOOD}\\[1ex]
+  \fig{vdpl_m20}{VDPL}\hfill
+  \begin{subfigure}{0.49\textwidth}\end{subfigure}
+  \caption{Autonomous problems: $\lg\mathrm{ERR}$ versus CPU time.}
+  \label{fig:aut}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+  \fig{difkon_m69}{DIFKON}\hfill\fig{diffu2_m69}{DIFFU2}
+  \caption{Non-autonomous problems (native form, exact $f_t$).}
+  \label{fig:nonaut}
+\end{figure}
+
+\section{Summary}
+
+Table~\ref{tab:ratio} compares CPU time at \emph{equal accuracy}: for each
+Fortran point, the Rust CPU time at the same ERR is interpolated (log-log)
+from the Rust curve. The number in parentheses counts the Fortran points
+inside the Rust ERR range.
+
+\begin{table}[htbp]\centering
+  \input{ratios.tex}
+  \caption{CPU time Rust/Fortran at equal ERR (geometric mean). Values below
+    1 mean Rust is faster.}
+  \label{tab:ratio}
+\end{table}
+
+\begin{itemize}
+  \item \textbf{GRK4T, Rust vs Fortran.} Same step counts (within a few
+    percent; NILIDI and the non-autonomous problems need 15--25\,\% fewer
+    steps). ERR at the same tolerance is equal or smaller. At equal accuracy
+    Rust takes 0.92--1.56 times the Fortran CPU time; it is faster on BRUSS.
+  \item \textbf{ROS34PW2} is the method of choice at crude tolerances
+    (HEAT: 0.57, DIFFU2: 0.90). At tighter tolerances its lower order costs
+    steps; on NILIDI, VDPL and DIFKON it is about twice as expensive as GRK4T.
+  \item \textbf{The reduced schedule} saves 5--30\,\% CPU at equal accuracy
+    and beats Fortran on HEAT, BRUSS and FOOD.
+\end{itemize}
+
+\section{The stage systems: incremental Givens QR}
+
+$H=Q^TAQ$ has a generalized Hessenberg structure (\texttt{docs/map.md} §9,
+proved in Lean, \texttt{HStructure.lean}). A closed column is final and zero
+below its closing row, and the closed columns form a prefix. All stages of a
+step share $M=I-\gamma hH$. So each closed column is rotated to triangular
+form exactly once. A solve treats only the few open trailing columns, and the
+stage-1 residual test needs only their solution components, with no full back
+substitution. This replaces the former dense LU from scratch per stage and
+per Arnoldi iteration. On VDPL the share of the small systems drops from
+11\,\% to 3.7\,\% of the run time; elsewhere it was small anyway.
+
+\section{Compiler and memory: the same algorithm}
+
+\texttt{rowmap.F} and the Rust code differ in the algorithm. Rust completes
+the proven MAP schedule and re-orthogonalizes; \texttt{rowmap.F} stops
+stages 2--4 early and does a single MGS pass. To compare compiler and memory
+behaviour, Rust was also run with a \emph{single} classical Gram--Schmidt pass
+(experiment flag \texttt{--single-pass}). The CPU time was normalized by the
+number of $Jv$ products, since each $Jv$ comes with one orthogonalization
+against the current basis (Table~\ref{tab:jv}).
+
+\begin{table}[htbp]\centering\small
+  \input{jvcost.tex}
+  \caption{Cost per $Jv$ product (user $Jv$ + Gram--Schmidt + bookkeeping),
+    geometric means over $\mathrm{tol}=10^{-2},\dots,10^{-7}$. Ratio:
+    Rust/Fortran per $Jv$.}
+  \label{tab:jv}
+\end{table}
+
+\begin{itemize}
+  \item \textbf{With a single pass, Rust is faster per $Jv$ on six of seven
+    problems} (ratio 0.75--0.96; NILIDI 1.09). This holds although Rust builds
+    12--54\,\% \emph{more} vectors per step, so each orthogonalization runs
+    against a larger basis. The kernels are blocked, use AVX2/FMA, and keep
+    $Q$ contiguous; \texttt{rowmap.F} calls BLAS-1 (\texttt{ddot},
+    \texttt{daxpy}) once per basis vector. NILIDI, with the longest basis
+    ($\kappa\approx50$), is the exception; the cause was not investigated.
+  \item \textbf{The second pass costs 25--56\,\% per $Jv$} (two-pass ratio
+    0.93--1.53). Together with the 5--37\,\% more $Jv$ per step (complete
+    schedule), this accounts for the gap in Table~\ref{tab:ratio}.
+  \item \textbf{Single pass is not an option for the solver.} With one pass,
+    13 unit tests fail. At (near) breakdown the normalized rounding remainder
+    is not orthogonal to $Q$ ($\|Q^TQ-I\|=1$, step results off by $O(10)$),
+    and $w_4\in K_3$ is no longer detected. On the paper problems, VDPL
+    loses a factor of 30 in ERR at $\mathrm{tol}=10^{-7}$, and HEAT needs 254
+    instead of 99 steps. The second pass stays the default (decision of the
+    authors); the single pass remains in the code for comparisons only.
+\end{itemize}
+
+\section{Room for optimization}
+
+Profile (feature \texttt{profile}, $\mathrm{tol}=10^{-5}$): orthogonalization
+takes 37--57\,\% of the run time, the user's $Jv$ 16--31\,\%, $f$ 1--7\,\%,
+the Givens QR at most 4\,\% (VDPL), and the rest a few percent. The kernels run near the
+memory and FMA limits. So what remains is algorithmic, and each option needs
+a decision:
+
+\begin{enumerate}
+  \item \textbf{Stage-4 closure} (GRK4T autonomous). Dropping it is
+    classically sufficient for order~4 and saves 5--30\,\%. It is the only
+    option that keeps an order guarantee (the classical one).
+  \item \textbf{Early stop in stages 2--4} as in \texttt{rowmap.F}: fewer
+    $Jv$, but no longer the proven minimal dimensions.
+  \item \textbf{Smaller items}, a few percent each: allocation reuse,
+    \texttt{target-cpu=native}.
+\end{enumerate}
+
+\end{document}

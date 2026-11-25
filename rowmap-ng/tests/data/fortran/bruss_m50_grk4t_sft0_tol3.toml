@@ -1,0 +1,19 @@
+[run]
+producer = "rowmap-f77"
+problem = "bruss"
+m = 50
+n = 5000
+method = "grk4t"
+rtol =  1.0000000000000000E-003
+atol =  1.0000000000000000E-003
+max_krylov = 66
+sft = 0
+t_end =  1.0000000000000000E+000
+idid = 1
+
+[stats]
+err =  7.4124700503061153E-005
+nstep = 22
+nfeval = 66
+njv = 242
+cpu_time =  1.6078906249999997E-002
